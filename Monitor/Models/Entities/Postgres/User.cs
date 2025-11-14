@@ -1,4 +1,5 @@
 using Dapper.Contrib.Extensions;
+using Monitor.Models.DTOs.Requests;
 
 namespace Monitor.Models.Entities.Postgres
 {
@@ -8,10 +9,21 @@ namespace Monitor.Models.Entities.Postgres
         [Key]
         public int Id { get; set; }
 
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; set; }
 
-        public string Email { get; set; } = string.Empty;
+        public string Email { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; }
+
+        public User(CreateUserRequest userDto)
+        {
+            Name = userDto.Name;
+            Email = userDto.Email;
+        }
+
+        public User()
+        {
+            
+        }
     }
 }

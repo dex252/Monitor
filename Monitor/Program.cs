@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http.Json;
 using Monitor.Factories;
 using Monitor.Models.Settings;
 using Monitor.Repositories;
@@ -11,6 +13,12 @@ builder.Configuration.Bind(appSettings);
 builder.Services.AddSingleton(appSettings);
 
 builder.Services.AddControllers();
+
+builder.Services.Configure<JsonOptions>(options =>
+{
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

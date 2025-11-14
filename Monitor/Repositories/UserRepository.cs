@@ -32,7 +32,14 @@ namespace Monitor.Repositories
 
         public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
-            const string sql = "select * from users";
+            const string sql = @"
+                select 
+                    id, 
+                    name,
+                    email,
+                    created_at as CreatedAt
+                from 
+                    users";
             return await ExecuteAsync(async connection =>
             {
                 var users = await connection.QueryAsync<User>(sql);

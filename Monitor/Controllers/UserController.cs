@@ -25,11 +25,7 @@ namespace Monitor.Controllers
         [Consumes("application/json")]
         public async Task<IActionResult> AddUser(CreateUserRequest userDto)
         {
-            var user = new User()
-            {
-              Name =userDto.Name,
-              Email = userDto.Email
-            };
+            var user = new User(userDto);
 
             var id = await _userRepository.AddUserAsync(user);
             return Ok(id);
