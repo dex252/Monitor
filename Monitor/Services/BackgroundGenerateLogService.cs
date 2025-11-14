@@ -36,6 +36,7 @@ namespace Monitor.Services
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             await UpdateUsersCacheAsync();
+            MetricsCollector.ServiceStatus.Set(isActive ? 1 : 0);
 
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -50,22 +51,29 @@ namespace Monitor.Services
                     var userId = await GetRandomUserAsync();
                     var generatedLog = GenerateLog(userId);
                     await InsertLogInDb(generatedLog);
-                    await Task.Delay(Random.Next(1000, 5000), stoppingToken);
+                    
+                    MetricsCollector.ErrorsByType
+                        .WithLabels(generatedLog.ErrorType.ToString(), generatedLog.Application.ToString())
+                        .Inc();
+
+                    MetricsCollector.TotalErrors.Inc();
+                    
+                    await Task.Delay(Random.Next(500, 1500), stoppingToken);
                 }
                 catch (OperationCanceledException)
                 {
                     //приложение останавливается
-                    await Task.Delay(5000, stoppingToken);
+                    await Task.Delay(10000, stoppingToken);
                     break;
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
-                    await Task.Delay(5000, stoppingToken);
+                    await Task.Delay(10000, stoppingToken);
                 }
                 finally
                 {
-                    await Task.Delay(5000, stoppingToken);
+                    await Task.Delay(1000, stoppingToken);
                 }
             }
 
@@ -187,6 +195,7 @@ namespace Monitor.Services
             }
 
             isActive = true;
+            MetricsCollector.ServiceStatus.Set(1);
             return true;
         }
 
@@ -197,6 +206,7 @@ namespace Monitor.Services
                 return false;
             }
 
+            MetricsCollector.ServiceStatus.Set(0);
             isActive = false;
             return true;
         }

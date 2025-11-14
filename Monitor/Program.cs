@@ -5,6 +5,7 @@ using Monitor.Models.Settings;
 using Monitor.Repositories;
 using Monitor.Repositories.Inretfaces;
 using Monitor.Services;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,8 @@ builder.Services.Configure<JsonOptions>(options =>
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
+builder.Services.AddHealthChecks();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -30,6 +33,10 @@ builder.Services.AddHostedService<BackgroundGenerateLogService>();
 
 var app = builder.Build();
 
+app.MapHealthChecks("/health");
+
+app.UseHttpMetrics();
+app.MapMetrics();
 
 app.UseSwagger();
 app.UseSwaggerUI(options =>

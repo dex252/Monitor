@@ -17,7 +17,7 @@ namespace Monitor.Controllers
         {
              _serviceProvider = serviceProvider;
         }
-
+        
         [HttpGet("status")]
         public IActionResult Status()
         {
