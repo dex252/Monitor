@@ -1,11 +1,22 @@
+using Monitor.Factories;
+using Monitor.Models.Settings;
+using Monitor.Repositories;
+using Monitor.Repositories.Inretfaces;
 using Monitor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+var appSettings = new AppSettings();
+builder.Configuration.Bind(appSettings);
+builder.Services.AddSingleton(appSettings);
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IPostgresConnection, PostgresConnection>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ILogsRepository, LogsRepository>();
 
 builder.Services.AddHostedService<BackgroundGenerateLogService>();
 
