@@ -28,6 +28,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IPostgresConnection, PostgresConnection>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ILogsRepository, LogsRepository>();
+builder.Services.AddScoped<IHealthDbRepository, HealthPostgresRepository>();
 
 builder.Services.AddHostedService<BackgroundGenerateLogService>();
 
